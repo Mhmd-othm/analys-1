@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, BookOpen, RotateCcw, Search, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, BookOpen, RotateCcw, Search, X } from 'lucide-react';
 import { STUDY_GUIDES } from '../../data/studyGuides.ts';
 import type { StudyGuide } from '../../data/studyGuides.ts';
 import type { StudyGuideId } from '../../math/index.ts';
@@ -12,6 +12,7 @@ import {
 interface HomeViewProps {
   onSelectGuide: (id: StudyGuideId) => void;
   onOpenGenerator: () => void;
+  onOpenSpotError?: () => void;
 }
 
 const SUGGESTION_CHIPS = [
@@ -48,7 +49,11 @@ function matchesQuery(guide: StudyGuide, query: string): boolean {
   return terms.every((term) => haystack.includes(term));
 }
 
-export function HomeView({ onSelectGuide, onOpenGenerator }: HomeViewProps) {
+export function HomeView({
+  onSelectGuide,
+  onOpenGenerator,
+  onOpenSpotError,
+}: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [goalsMap, setGoalsMap] = useState(() => readGoalsProgress());
   const [statsMap, setStatsMap] = useState(() => readStatsProgress());
@@ -102,9 +107,21 @@ export function HomeView({ onSelectGuide, onOpenGenerator }: HomeViewProps) {
             )}
           </div>
 
-          <button type="button" className="btn btn-primary" onClick={onOpenGenerator}>
-            Öppna Frågegenerator
-          </button>
+          <div className="row-wrap" style={{ gap: '0.45rem' }}>
+            <button type="button" className="btn btn-primary" onClick={onOpenGenerator}>
+              Öppna Frågegenerator
+            </button>
+            {onOpenSpotError && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onOpenSpotError}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <AlertTriangle size={15} color="var(--amber)" /> Hitta felet i tentan
+              </button>
+            )}
+          </div>
         </div>
       </section>
 

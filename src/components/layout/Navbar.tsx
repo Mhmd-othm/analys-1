@@ -1,6 +1,6 @@
-import { BookMarked, BookOpen, Moon, Sparkles, Sun } from 'lucide-react';
+import { AlertTriangle, BookMarked, BookOpen, Moon, Sparkles, Sun } from 'lucide-react';
 
-export type ActivePage = 'home' | 'guide' | 'generator';
+export type ActivePage = 'home' | 'guide' | 'generator' | 'spot-error';
 export type ThemeMode = 'light' | 'dark';
 
 interface NavbarProps {
@@ -8,6 +8,7 @@ interface NavbarProps {
   theme: ThemeMode;
   onNavigateHome: () => void;
   onNavigateGenerator: () => void;
+  onNavigateSpotError: () => void;
   onOpenFormulas: () => void;
   onToggleTheme: () => void;
 }
@@ -17,6 +18,7 @@ export function Navbar({
   theme,
   onNavigateHome,
   onNavigateGenerator,
+  onNavigateSpotError,
   onOpenFormulas,
   onToggleTheme,
 }: NavbarProps) {
@@ -58,6 +60,14 @@ export function Navbar({
           >
             <Sparkles size={16} />
             Frågegenerator
+          </button>
+          <button
+            type="button"
+            className={`nav-pill${activePage === 'spot-error' ? ' active' : ''}`}
+            onClick={onNavigateSpotError}
+          >
+            <AlertTriangle size={16} />
+            Hitta felet
           </button>
           <button type="button" className="nav-pill" onClick={onOpenFormulas}>
             <BookMarked size={16} />

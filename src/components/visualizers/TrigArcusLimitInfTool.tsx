@@ -7,11 +7,12 @@ import type { LimitPresetId, TrigFnKind } from '../../math/index.ts';
 import { KatexBlock } from '../common/KatexBlock.tsx';
 import { MathStepsDisplay } from '../common/MathStepsDisplay.tsx';
 import { FunctionPlot2D } from './FunctionPlot2D.tsx';
+import { UnitCircleExplorer } from './UnitCircleExplorer.tsx';
 
-type SubTab = 'trigeq' | 'arcus' | 'limitinf';
+type SubTab = 'unitcircle' | 'trigeq' | 'arcus' | 'limitinf';
 
 export const TrigArcusLimitInfTool: React.FC = () => {
-  const [subTab, setSubTab] = useState<SubTab>('trigeq');
+  const [subTab, setSubTab] = useState<SubTab>('unitcircle');
 
   // --- Subtab 1: Trig ekvationslösare ---
   const [trigFn, setTrigFn] = useState<TrigFnKind>('sin');
@@ -45,6 +46,13 @@ export const TrigArcusLimitInfTool: React.FC = () => {
       <div className="tool-subtabs">
         <button
           type="button"
+          className={`seg-btn ${subTab === 'unitcircle' ? 'active' : ''}`}
+          onClick={() => setSubTab('unitcircle')}
+        >
+          Enhetscirkeln & Arcus-utforskare
+        </button>
+        <button
+          type="button"
           className={`seg-btn ${subTab === 'trigeq' ? 'active' : ''}`}
           onClick={() => setSubTab('trigeq')}
         >
@@ -55,7 +63,7 @@ export const TrigArcusLimitInfTool: React.FC = () => {
           className={`seg-btn ${subTab === 'arcus' ? 'active' : ''}`}
           onClick={() => setSubTab('arcus')}
         >
-          Arcusfunktioner & huvudvärden
+          Arcusfunktionernas grafer
         </button>
         <button
           type="button"
@@ -65,6 +73,8 @@ export const TrigArcusLimitInfTool: React.FC = () => {
           Gränsvärden då x → ±∞
         </button>
       </div>
+
+      {subTab === 'unitcircle' && <UnitCircleExplorer />}
 
       {subTab === 'trigeq' && (
         <div className="tool-grid">

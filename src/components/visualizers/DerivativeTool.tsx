@@ -2,8 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { tryCompileExpr } from '../../math/index.ts';
 import { KatexBlock } from '../common/KatexBlock.tsx';
 import { FunctionPlot2D } from './FunctionPlot2D.tsx';
+import { NewtonRaphsonExplorer } from './NewtonRaphsonExplorer.tsx';
 
-type SubTab = 'secant' | 'mvt';
+type SubTab = 'secant' | 'mvt' | 'newton';
 
 const DERIV_PRESETS = [
   { label: 'x³ − 3x', expr: 'x^3 - 3*x' },
@@ -132,6 +133,13 @@ export const DerivativeTool: React.FC = () => {
           onClick={() => setSubTab('mvt')}
         >
           Medelvärdessatsen (MVT)
+        </button>
+        <button
+          type="button"
+          className={`seg-btn ${subTab === 'newton' ? 'active' : ''}`}
+          onClick={() => setSubTab('newton')}
+        >
+          Newtons metod (Rotsökning)
         </button>
       </div>
 
@@ -373,6 +381,8 @@ export const DerivativeTool: React.FC = () => {
           />
         </div>
       )}
+
+      {subTab === 'newton' && <NewtonRaphsonExplorer />}
     </div>
   );
 };

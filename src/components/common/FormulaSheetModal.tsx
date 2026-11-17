@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { BookMarked, Printer, Search, X } from 'lucide-react';
+import { BookMarked, Dumbbell, Printer, Search, X } from 'lucide-react';
+import { FormulaDrill } from './FormulaDrill.tsx';
 import { KatexBlock } from './KatexBlock.tsx';
 
 type FormulaGroup = 'all' | 'dugga1' | 'dugga2' | 'dugga3' | 'tenta4';
@@ -112,6 +113,7 @@ interface FormulaSheetModalProps {
 }
 
 export function FormulaSheetModal({ open, onClose }: FormulaSheetModalProps) {
+  const [modalTab, setModalTab] = useState<'sheet' | 'drill'>('sheet');
   const [group, setGroup] = useState<FormulaGroup>('all');
   const [query, setQuery] = useState('');
 
@@ -187,66 +189,89 @@ export function FormulaSheetModal({ open, onClose }: FormulaSheetModalProps) {
           </div>
         </div>
 
-        <div className="warn-box" style={{ marginTop: 0, marginBottom: '0.85rem' }}>
-          <strong>Tentamensregler i MA1499:</strong> Inga hjälpmedel är tillåtna på salstentamen.
-          Andragradsekvationer får <strong>inte</strong> lösas med pq-/abc-formeln och L’Hôspitals
-          regel får <strong>inte</strong> användas.
+        <div className="tool-subtabs no-print" style={{ marginBottom: '0.85rem' }}>
+          <button
+            type="button"
+            className={`seg-btn ${modalTab === 'sheet' ? 'active' : ''}`}
+            onClick={() => setModalTab('sheet')}
+          >
+            <BookMarked size={15} /> Formelblad (Referens)
+          </button>
+          <button
+            type="button"
+            className={`seg-btn ${modalTab === 'drill' ? 'active' : ''}`}
+            onClick={() => setModalTab('drill')}
+          >
+            <Dumbbell size={15} /> Formel-Drill (Flashcards)
+          </button>
         </div>
 
-        <div className="no-print" style={{ marginBottom: '0.85rem' }}>
-          <div className="search-input-wrap" style={{ marginBottom: '0.6rem' }}>
-            <Search size={16} className="search-icon" />
-            <input
-              type="search"
-              className="search-input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Sök formel (t.ex. standardgränsvärde, arcsin, maclaurin, derivata)..."
-              aria-label="Sök i formelsamlingen"
-              style={{ paddingTop: '0.5rem', paddingBottom: '0.5rem' }}
-            />
-          </div>
-          <div className="row-wrap">
-            {GROUP_FILTERS.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                className={`seg-btn${group === f.id ? ' active' : ''}`}
-                onClick={() => setGroup(f.id)}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        {modalTab === 'drill' ? (
+          <FormulaDrill />
+        ) : (
+          <>
+            <div className="warn-box" style={{ marginTop: 0, marginBottom: '0.85rem' }}>
+              <strong>Tentamensregler i MA1499:</strong> Inga hjälpmedel är tillåtna på salstentamen.
+              Andragradsekvationer får <strong>inte</strong> lösas med pq-/abc-formeln och L’Hôspitals
+              regel får <strong>inte</strong> användas.
+            </div>
 
-        <div className="section-stack" style={{ gap: '0.75rem' }}>
-          {visible.length === 0 ? (
-            <p className="muted-text" style={{ textAlign: 'center', margin: '1rem 0' }}>
-              Inga formler matchade sökningen.
-            </p>
-          ) : (
-            visible.map((item) => (
-              <div
-                key={item.title}
-                style={{
-                  padding: '0.75rem 0.9rem',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border)',
-                  backgroundColor: 'var(--bg-recessed)',
-                }}
-              >
-                <div className="space-between" style={{ marginBottom: '0.35rem' }}>
-                  <strong style={{ fontSize: '0.94rem' }}>{item.title}</strong>
-                  <span className="sg-badge">{item.guide}</span>
-                </div>
-                <div className="formula-box" style={{ margin: 0 }}>
-                  <KatexBlock latex={item.latex} displayMode />
-                </div>
+            <div className="no-print" style={{ marginBottom: '0.85rem' }}>
+              <div className="search-input-wrap" style={{ marginBottom: '0.6rem' }}>
+                <Search size={16} className="search-icon" />
+                <input
+                  type="search"
+                  className="search-input"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Sök formel (t.ex. standardgränsvärde, arcsin, maclaurin, derivata)..."
+                  aria-label="Sök i formelsamlingen"
+                  style={{ paddingTop: '0.5rem', paddingBottom: '0.5rem' }}
+                />
               </div>
-            ))
-          )}
-        </div>
+              <div className="row-wrap">
+                {GROUP_FILTERS.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    className={`seg-btn${group === f.id ? ' active' : ''}`}
+                    onClick={() => setGroup(f.id)}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="section-stack" style={{ gap: '0.75rem' }}>
+              {visible.length === 0 ? (
+                <p className="muted-text" style={{ textAlign: 'center', margin: '1rem 0' }}>
+                  Inga formler matchade sökningen.
+                </p>
+              ) : (
+                visible.map((item) => (
+                  <div
+                    key={item.title}
+                    style={{
+                      padding: '0.75rem 0.9rem',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                      backgroundColor: 'var(--bg-recessed)',
+                    }}
+                  >
+                    <div className="space-between" style={{ marginBottom: '0.35rem' }}>
+                      <strong style={{ fontSize: '0.94rem' }}>{item.title}</strong>
+                      <span className="sg-badge">{item.guide}</span>
+                    </div>
+                    <div className="formula-box" style={{ margin: 0 }}>
+                      <KatexBlock latex={item.latex} displayMode />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

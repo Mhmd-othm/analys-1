@@ -3,9 +3,10 @@ import { analyzeLimitPreset } from '../../math/index.ts';
 import type { LimitPresetId } from '../../math/index.ts';
 import { KatexBlock } from '../common/KatexBlock.tsx';
 import { MathStepsDisplay } from '../common/MathStepsDisplay.tsx';
+import { EpsilonDeltaExplorer } from './EpsilonDeltaExplorer.tsx';
 import { FunctionPlot2D } from './FunctionPlot2D.tsx';
 
-type SubTab = 'stdlimits' | 'continuity';
+type SubTab = 'stdlimits' | 'continuity' | 'epsilondelta';
 
 const PRESET_OPTIONS: { id: LimitPresetId; label: string }[] = [
   { id: 'sin_kx_over_x', label: 'sin(kx) / x' },
@@ -50,6 +51,13 @@ export const LimitsAndContinuityTool: React.FC = () => {
           onClick={() => setSubTab('continuity')}
         >
           Kontinuitet & gränsvärden i styckvis funktion
+        </button>
+        <button
+          type="button"
+          className={`seg-btn ${subTab === 'epsilondelta' ? 'active' : ''}`}
+          onClick={() => setSubTab('epsilondelta')}
+        >
+          ε-δ-definitionen & bevisföring
         </button>
       </div>
 
@@ -218,6 +226,8 @@ export const LimitsAndContinuityTool: React.FC = () => {
           />
         </div>
       )}
+
+      {subTab === 'epsilondelta' && <EpsilonDeltaExplorer />}
     </div>
   );
 };

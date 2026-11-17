@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { STUDY_GUIDE_IDS, STUDY_GUIDES } from '../../data/studyGuides.ts';
 import { generateExerciseForGuide } from '../../math/index.ts';
 import { MathText } from '../common/MathText.tsx';
+import { FormulaDrill } from '../common/FormulaDrill.tsx';
 import { FormulaSheetModal } from '../common/FormulaSheetModal.tsx';
 import { ExerciseCard } from '../exercises/ExerciseCard.tsx';
 import { QuestionGeneratorView } from '../exercises/QuestionGeneratorView.tsx';
+import { SpotTheErrorView } from '../exercises/SpotTheErrorView.tsx';
 import { HomeView } from '../home/HomeView.tsx';
 import { Navbar } from '../layout/Navbar.tsx';
 import { TopicDetailView } from '../study/TopicDetailView.tsx';
@@ -13,10 +15,13 @@ import { AlgebraAndFunctionTool } from '../visualizers/AlgebraAndFunctionTool.ts
 import { CurveSketchAndOptTool } from '../visualizers/CurveSketchAndOptTool.tsx';
 import { DerivativeTool } from '../visualizers/DerivativeTool.tsx';
 import { ElementaryFunctionsTool } from '../visualizers/ElementaryFunctionsTool.tsx';
+import { EpsilonDeltaExplorer } from '../visualizers/EpsilonDeltaExplorer.tsx';
 import { FunctionPlot2D } from '../visualizers/FunctionPlot2D.tsx';
 import { LimitsAndContinuityTool } from '../visualizers/LimitsAndContinuityTool.tsx';
 import { MaclaurinAndSeriesTool } from '../visualizers/MaclaurinAndSeriesTool.tsx';
+import { NewtonRaphsonExplorer } from '../visualizers/NewtonRaphsonExplorer.tsx';
 import { TrigArcusLimitInfTool } from '../visualizers/TrigArcusLimitInfTool.tsx';
+import { UnitCircleExplorer } from '../visualizers/UnitCircleExplorer.tsx';
 
 describe('UI komponenter (SSR röktest)', () => {
   it('renderar Navbar och HomeView med alla 7 studieguider', () => {
@@ -26,17 +31,24 @@ describe('UI komponenter (SSR röktest)', () => {
         theme="light"
         onNavigateHome={() => {}}
         onNavigateGenerator={() => {}}
+        onNavigateSpotError={() => {}}
         onOpenFormulas={() => {}}
         onToggleTheme={() => {}}
       />,
     );
     expect(navHtml).toContain('Envariabelanalys 1 (MA1499)');
     expect(navHtml).toContain('Formelsamling');
+    expect(navHtml).toContain('Hitta felet');
 
     const homeHtml = renderToStaticMarkup(
-      <HomeView onSelectGuide={() => {}} onOpenGenerator={() => {}} />,
+      <HomeView
+        onSelectGuide={() => {}}
+        onOpenGenerator={() => {}}
+        onOpenSpotError={() => {}}
+      />,
     );
     expect(homeHtml).toContain('Envariabelanalys 1');
+    expect(homeHtml).toContain('Hitta felet i tentan');
     for (const guide of STUDY_GUIDES) {
       expect(homeHtml).toContain(guide.number);
     }
@@ -111,5 +123,30 @@ describe('UI komponenter (SSR röktest)', () => {
       const html = renderToStaticMarkup(tool);
       expect(html).toContain('<svg');
     }
+  });
+
+  it('renderar nya interaktiva verktyg: UnitCircle, EpsilonDelta, Newton, SpotTheError och FormulaDrill', () => {
+    const circleHtml = renderToStaticMarkup(<UnitCircleExplorer />);
+    expect(circleHtml).toContain('Enhetscirkeln');
+    expect(circleHtml).toContain('<svg');
+    expect(circleHtml).toContain('arcsin');
+
+    const epsDeltaHtml = renderToStaticMarkup(<EpsilonDeltaExplorer />);
+    expect(epsDeltaHtml).toContain('Formell definition');
+    expect(epsDeltaHtml).toContain('<svg');
+    expect(epsDeltaHtml).toContain('Tolerans');
+
+    const newtonHtml = renderToStaticMarkup(<NewtonRaphsonExplorer />);
+    expect(newtonHtml).toContain('Newtons metod');
+    expect(newtonHtml).toContain('Iterationstabell');
+    expect(newtonHtml).toContain('<svg');
+
+    const spotErrorHtml = renderToStaticMarkup(<SpotTheErrorView />);
+    expect(spotErrorHtml).toContain('Tentatränaren: Hitta felet i lösningen');
+    expect(spotErrorHtml).toContain('Rotekvation &amp; falska rötter');
+
+    const drillHtml = renderToStaticMarkup(<FormulaDrill />);
+    expect(drillHtml).toContain('Kort 1 av');
+    expect(drillHtml).toContain('Vänd kort');
   });
 });

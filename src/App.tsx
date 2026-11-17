@@ -16,6 +16,12 @@ const QuestionGeneratorView = lazy(() =>
   })),
 );
 
+const SpotTheErrorView = lazy(() =>
+  import('./components/exercises/SpotTheErrorView.tsx').then((m) => ({
+    default: m.SpotTheErrorView,
+  })),
+);
+
 const FormulaSheetModal = lazy(() =>
   import('./components/common/FormulaSheetModal.tsx').then((m) => ({
     default: m.FormulaSheetModal,
@@ -39,6 +45,9 @@ function parseHashRoute(): RouteState {
   }
   if (raw === 'generator') {
     return { page: 'generator', guideId: 'sg1' };
+  }
+  if (raw === 'spot-error') {
+    return { page: 'spot-error', guideId: 'sg1' };
   }
   if (isValidGuideId(raw)) {
     return { page: 'guide', guideId: raw };
@@ -98,6 +107,12 @@ export const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const navigateSpotError = useCallback(() => {
+    window.location.hash = '#/spot-error';
+    setRoute((prev) => ({ ...prev, page: 'spot-error' }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
@@ -109,6 +124,7 @@ export const App: React.FC = () => {
         theme={theme}
         onNavigateHome={navigateHome}
         onNavigateGenerator={navigateGenerator}
+        onNavigateSpotError={navigateSpotError}
         onOpenFormulas={() => setFormulaOpen(true)}
         onToggleTheme={toggleTheme}
       />
@@ -118,6 +134,7 @@ export const App: React.FC = () => {
           <HomeView
             onSelectGuide={navigateGuide}
             onOpenGenerator={navigateGenerator}
+            onOpenSpotError={navigateSpotError}
           />
         )}
 
@@ -147,6 +164,18 @@ export const App: React.FC = () => {
             }
           >
             <QuestionGeneratorView />
+          </Suspense>
+        )}
+
+        {route.page === 'spot-error' && (
+          <Suspense
+            fallback={
+              <div className="panel">
+                <p className="muted-text">Laddar Hitta felet-läget...</p>
+              </div>
+            }
+          >
+            <SpotTheErrorView />
           </Suspense>
         )}
       </main>
